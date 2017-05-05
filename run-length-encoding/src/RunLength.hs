@@ -1,17 +1,26 @@
 module RunLength (decode, encode) where
 
+import Data.Char
+import Data.Maybe
+import Data.List
+
 decode :: String -> String
-decode _ = "You need to implement this function."
+decode [] = []
+decode s
+    | null n    = c : decode rest
+    | otherwise = replicate (read n) c ++ decode rest
+    where
+        (n, r)    = span isDigit s
+        (c, rest) = fromJust $ uncons r
 
 encode' :: Int -> String -> String
-encode' acc (x:[]) = (if acc == 1 then [] else show acc) ++ [x]
+encode' _ [] = []
 encode' acc (x:xs)
+    | null xs      = encoded
     | x == head xs = encode' (acc + 1) xs
-    | otherwise    =
-        (if acc == 1
-            then []
-            else (show acc))
-        ++ [x] ++ encode' 1 xs
+    | otherwise    = encoded ++ encode' 1 xs
+    where
+        encoded = (if acc == 1 then [] else show acc) ++ [x]
 
 encode :: String -> String
-encode text = encode' 1 text
+encode = encode' 1
