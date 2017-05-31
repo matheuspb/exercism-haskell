@@ -1,0 +1,23 @@
+language: haskell
+
+addons:
+    apt:
+        packages:
+            - libgmp-dev # Stack's GHC depends on this.
+
+cache:
+    directories:
+        - $HOME/.stack
+        - $HOME/bin
+
+before_install:
+    - mkdir -p ${HOME}/bin
+    - export PATH="${HOME}/bin:$PATH"
+
+install:
+    - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 -o pack.tgz
+    - tar xzf pack.tgz --wildcards --strip-components=1 -C ${HOME}/bin '*/stack'
+    - stack --resolver "lts-7.9" --install-ghc install hlint
+
+script:
+    - sh test.sh
